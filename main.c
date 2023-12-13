@@ -9,7 +9,7 @@
 #define branco al_map_rgb_f(255,255,255)
 #define dbb al_map_rgb_f(0,1,0)
 
-const float FPS = 40;
+const float FPS = 30;
 
 int main(int argc, char *argv[]){   
 	bool running = true;
@@ -20,7 +20,7 @@ int main(int argc, char *argv[]){
 	ALLEGRO_EVENT event;
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_EVENT_QUEUE *queue = NULL;
- 	ALLEGRO_TIMER* timer = al_create_timer(1.0/20);
+ 	ALLEGRO_TIMER* timer = al_create_timer(1.0/FPS);
 	ALLEGRO_BITMAP  *background= NULL;
 	display = al_create_display(480, 600);
 	al_clear_to_color(al_map_rgb(255, 255, 255));
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]){
 	int x=220;
 	int y = 300;
 	int state =83;
-	int eixo;
+	int try = 2;
 	void orch2(int x, int y, ALLEGRO_COLOR cor){
 		
 		al_draw_rectangle(x, y, x+body, y+body, cor, 5);
@@ -49,7 +49,37 @@ int main(int argc, char *argv[]){
 		al_draw_rectangle(x, y, x+body, y+body, cor, 5);
 		al_flip_display();
 	}
-	
+
+	int* o1_teste(int x, int y, ALLEGRO_COLOR cor, int n){
+
+		int *arr = malloc(sizeof(int) * 2);
+		if (n == 1){
+			al_draw_rectangle(x, y, x+body, y+body, cor, 5);
+			arr[0] = x;
+			arr[1] = y;
+			return arr;
+		}
+		int *recur =  o1_teste(x, y-inc, cor, n-1);
+		al_draw_rectangle(recur[0], recur[1]+inc, x+body, y+body, cor, 5);
+		return recur;
+
+	}
+
+	int* xo1_teste(int x, int y, ALLEGRO_COLOR cor, int n){
+		int *arr = malloc(sizeof(int) * 2);
+		if (n == 1){
+			al_draw_rectangle(x, y, x+body, y+body, cor, 5);
+			// al_draw_filled_circle(x, y, 5, azul);
+			arr[0] = x;
+			arr[1] = y;
+			return arr;
+		}
+		int *recur =  xo1_teste(x+inc, y, cor, n-1);
+		al_draw_rectangle(recur[0], recur[1], x+body, y+body, cor, 5);
+		// al_draw_filled_circle(recur[0], recur[1], 5, azul);
+		return recur;
+
+	}
 	bool valid(int num){
 
 		if (state == 84 && num == 85)
@@ -71,6 +101,7 @@ int main(int argc, char *argv[]){
 				case 84:
 				y-=inc;
 				orch1(x, y, azul);
+				// o1_teste(x,y, azul, 5);
 				orch1(x,y+inc, dbb);
 				puts("up");
 				break;
@@ -89,6 +120,7 @@ int main(int argc, char *argv[]){
 			case 83:
 				x+=inc;
 				orch2(x, y, azul);
+				// xo1_teste(x,y, azul, 3);
 				orch2(x-inc, y, branco);
 				puts("right");
 				break;
