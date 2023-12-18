@@ -3,13 +3,10 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
+#include "funcoes.h"
 #define body 7
 #define inc 10
-#define azul al_map_rgb_f(0, 0, 1)
-#define branco al_map_rgb_f(255,255,255)
-#define dbb al_map_rgb_f(0,1,0)
-
-const float FPS = 30;
+const float FPS = 10;
 #define show print_list(head)
 
 typedef struct node{
@@ -59,7 +56,7 @@ void print_list(node* head){
 }
 
 int main(int argc, char *argv[]){
-
+    srand(time(NULL));
 	bool running = true;
 	al_init();
 
@@ -75,6 +72,7 @@ int main(int argc, char *argv[]){
 	al_install_keyboard();
 	al_init_image_addon();
     ALLEGRO_BITMAP *snake = al_load_bitmap("snaki.bmp");
+    ALLEGRO_BITMAP *candy = al_load_bitmap("candy.bmp");
 
     queue = al_create_event_queue();
     al_register_event_source(queue, al_get_keyboard_event_source());
@@ -88,16 +86,6 @@ int main(int argc, char *argv[]){
     add(head, x-10, y);
     add(head, x-20, y);
 	int state =83;
-	void orch2(int x, int y, ALLEGRO_COLOR cor){
-		
-		al_draw_rectangle(x, y, x+body, y+body, cor, 5);
-		al_flip_display();
-	}
-	void orch1(int x, int y, ALLEGRO_COLOR cor){
-		
-		al_draw_rectangle(x, y, x+body, y+body, cor, 5);
-		al_flip_display();
-	}
     void draw(node* head){
         node *cur = head;
         while (cur!= NULL){
@@ -119,32 +107,26 @@ int main(int argc, char *argv[]){
 			return 0;
 	return 1;
 	}
+    void gen_candy(){
+        al_draw_bitmap(candy, gen_cord(), gen_cord(), 0);
+    }
     while (running) {
 
         al_wait_for_event(queue, &event);
-		// if(event.type == ALLEGRO_EVENT_TIMER) // dispara com o evento de timer, nao necessario nessa versao
-
-        if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE){
-            running = false;
-		}
-		if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
-			// if (event.keyboard.keycode>81 && event.keyboard.keycode <86)
-			switch (event.keyboard.keycode){
+		if(event.type == ALLEGRO_EVENT_TIMER){
+            int random_number = gen();
+                if (gen() >3 && gen()<7)
+                    gen_candy();
+            switch (state){
 				case 84:
 				y-=inc;
                 att_coords(head, x,y);
                 draw(head);
                 al_flip_display();
                 al_clear_to_color(al_map_rgb(255, 255, 255));
-				// orch1(head->x, head->y, azul);
-                // printf("headx %i -->heady %i", head->x, head->y);
-				// orch1(head->x,y+inc, branco);
-				puts("up");
 				break;
 			case 85:
 				y+=inc;
-				// orch2(x, y, azul);
-				// orch2(x, y-inc, branco);
                 att_coords(head, x, y);
                 draw(head);
                 al_flip_display();
@@ -157,14 +139,10 @@ int main(int argc, char *argv[]){
                 draw(head);
                 al_flip_display();
                 al_clear_to_color(al_map_rgb(255, 255, 255));              
-				// orch1(x, y, azul);
-				// orch1(x+inc,y, branco);
 				puts("left");
 				break;
 			case 83:
 				x+=inc;
-				// orch2(x, y, azul);
-				// orch2(x-inc, y, branco);
                 att_coords(head,x,y);
                 draw(head);
                 al_flip_display();
@@ -175,10 +153,19 @@ int main(int argc, char *argv[]){
 				// printf("algo deu errado");
 				break;
 			}
-
         }
 
-        // al_flip_display();
+        if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE){
+            running = false;
+		}
+		if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
+			if (event.keyboard.keycode>81 && event.keyboard.keycode <86 && valid(event.keyboard.keycode))
+                state = event.keyboard.keycode;
+            if (event.keyboard.keycode == ALLEGRO_KEY_A)
+            add(head, 0,0);
+                puts("JJDHAKSJDGHKASYGDADYSG");
+        }
+	
     }
 
     al_destroy_display(display);
