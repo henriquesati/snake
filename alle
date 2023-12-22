@@ -1,0 +1,3 @@
+gcc -Ic:\allegro\include -c main.c -o main.o
+
+gcc main.o -o main.exe -Lc:\allegro\lib -lallegro_monolith
