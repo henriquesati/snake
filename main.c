@@ -7,14 +7,8 @@
 #define body 7
 #define inc 10
 const float FPS = 15;
-#define show print_list(head)
 coord candy_array[50];
 
-void print_list(node* head){
-	for (node* p  = head; p!=NULL; p = p->next){
-		printf("node: %i\n", p->x);
-	}
-}
 
 int main(int argc, char *argv[]){
 	srand(time(NULL));
@@ -46,19 +40,8 @@ int main(int argc, char *argv[]){
 	int count = 0;
 	node* head = init_node(x,y);
 	add(head, x-10, y);
-	int state =83;
-	void check_candy(int x, int y){
-		int threshold = 4;
-		for (int i=0; i<candy_coord_i; i++){
-			int d_x = abs(x - candy_array[i].x);
-			int d_y = abs(y - candy_array[i].y);
-			
-			if (d_x <= threshold && d_y <= threshold ){
-				add(head, 0,0);    
-				rm_candy(i);
-			}
-		}
-	}
+	int state = 83;
+
 
 void att_coords(node* body_snake, int new_x, int new_y){
 	node *cur = body_snake;
@@ -67,7 +50,7 @@ void att_coords(node* body_snake, int new_x, int new_y){
 				game_over = true;
 			cur = cur->next;
 		}
-	check_candy(new_x,new_y);
+	check_candy(head, new_x,new_y);
 	cur = body_snake;
 	int old_x = new_x;
 	int old_y = new_y;
@@ -81,38 +64,38 @@ void att_coords(node* body_snake, int new_x, int new_y){
 			cur = cur->next;
 		}
 }   
-	void draw(node* head){
-		node *cur = head;
-		while (cur!= NULL){
-			al_draw_bitmap(snake, cur->x, cur->y, 0);
-			cur = cur->next;
-		}
+void draw(node* head){
+	node *cur = head;
+	while (cur!= NULL){
+		al_draw_bitmap(snake, cur->x, cur->y, 0);
+		cur = cur->next;
 	}
-	 void draw_candy(){
-		for (int i = 0; i<candy_coord_i; i++){
-			al_draw_bitmap(candy, candy_array[i].x, candy_array[i].y, 0);
-		}
+}
+void draw_candy(){
+	for (int i = 0; i<candy_coord_i; i++){
+		al_draw_bitmap(candy, candy_array[i].x, candy_array[i].y, 0);
 	}
-	bool valid(int num){
+}
+bool valid(int num){
 
-		if (state == 84 && num == 85)
-			return 0;
-		if(state == 82 && num == 83)
-			return 0;
-		if (state == 85 && num == 84)
-			return 0;
-		if(state == 83 && num == 82)
-			return 0;
+	if (state == 84 && num == 85)
+		return 0;
+	if(state == 82 && num == 83)
+		return 0;
+	if (state == 85 && num == 84)
+		return 0;
+	if(state == 83 && num == 82)
+		return 0;
 	return 1;
-	}
-	void draws(){
-		draw(head);
-		draw_candy();
-		al_flip_display();
-		al_clear_to_color(al_map_rgb(255, 255, 255));
+}
+void draws(){
+	draw(head);
+	draw_candy();
+	al_flip_display();
+	al_clear_to_color(al_map_rgb(255, 255, 255));
 
-	}
-	 while (running & !game_over) {
+}
+	while (running & !game_over) {
 
 		al_wait_for_event(queue, &event);
 		if(event.type == ALLEGRO_EVENT_TIMER){
@@ -147,14 +130,12 @@ void att_coords(node* body_snake, int new_x, int new_y){
 			}
 		}
 
-		if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE){
+		if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
 			running = false;
-		}
+		
 		if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
 			if (event.keyboard.keycode>81 && event.keyboard.keycode <86 && valid(event.keyboard.keycode))
 				state = event.keyboard.keycode;
-			if (event.keyboard.keycode == ALLEGRO_KEY_A)
-				add(head, 0,0);
 			if (event.keyboard.keycode == ALLEGRO_KEY_B)
 				running = false;
 

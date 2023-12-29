@@ -3,6 +3,7 @@
 #include <time.h>
 #include <stdbool.h>
 extern bool game_over = false;
+
 int candy_coord_i = 0;
 int gen() {
     return (rand() % 10) + 1;
@@ -63,3 +64,17 @@ void rm_candy(int index){
     candy_array[index].y = 999;
 
 }
+extern node* head;
+
+void check_candy(node* head, int x, int y){
+		int threshold = 4;
+		for (int i=0; i<candy_coord_i; i++){
+			int d_x = abs(x - candy_array[i].x);
+			int d_y = abs(y - candy_array[i].y);
+			
+			if (d_x <= threshold && d_y <= threshold ){
+				add(head, 0,0);    
+				rm_candy(i);
+			}
+		}
+	}
